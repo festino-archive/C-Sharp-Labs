@@ -32,8 +32,8 @@ namespace Lab1
 
         public void AddDefaults()
         {
-            int onGridCount = RandomUtils.GetInt(2, 4);
-            int collectionCount = RandomUtils.GetInt(2, 4);
+            int onGridCount = 2;
+            int collectionCount = 2;
             for (int i = 0; i < onGridCount; i++)
             {
                 V1DataOnGrid data = new V1DataOnGrid($"id={i}", DateTime.Now, new Grid(0, 0.1f, 10));

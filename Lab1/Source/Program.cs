@@ -10,7 +10,7 @@ namespace Lab1
             // 1
             Console.WriteLine("[1]\n");
             float t1 = 0.001f;
-            Grid grid1 = new Grid(0, t1, 20);
+            Grid grid1 = new Grid(0, t1, 10);
             DateTime dateTime1 = new DateTime(2015, 11, 14, 17, 01, 47);
             V1DataOnGrid data1 = new V1DataOnGrid("id1", dateTime1, grid1);
             for (int i = 0; i < data1.Values.Length; i++)
@@ -22,13 +22,13 @@ namespace Lab1
             Console.WriteLine(data2.ToLongString());
 
             // 2
-            Console.WriteLine("\n[2]\n");
+            Console.WriteLine("\n\n\n[2]\n");
             V1MainCollection mainColl = new V1MainCollection();
             mainColl.AddDefaults();
             Console.WriteLine(mainColl);
 
             // 3
-            Console.WriteLine("\n[3] eps=0.1\n");
+            Console.WriteLine("\n\n\n[3] eps=0.1\n");
             PrintNearZero(mainColl, 0.1f);
             Console.WriteLine("\n[3] eps=0.5\n");
             PrintNearZero(mainColl, 0.5f);
