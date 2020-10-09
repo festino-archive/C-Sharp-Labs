@@ -50,13 +50,8 @@ namespace Lab1
 
         public override string ToString()
         {
-            string res = "\n";
-
-            foreach (V1Data data in DataSets)
-            {
-                res += "\t" + data.ToString() + "\n";
-            }
-            return $"{GetType().Name} {{{res}}}";
+            string res = "\t" + string.Join<V1Data>("\n\t", DataSets) + "\n";
+            return $"{GetType().Name} {{\n{res}}}";
         }
 
         public IEnumerator GetEnumerator()
