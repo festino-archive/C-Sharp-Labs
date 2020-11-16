@@ -14,10 +14,11 @@ namespace Lab1
         }
 
         public abstract float[] NearZero(float eps);
-        public abstract string ToLongString();
         public override string ToString()
         {
             return $"[{Date}] {Info}";
         }
+        public abstract string ToLongString();
+        public abstract string ToLongString(string format);
     }
 }

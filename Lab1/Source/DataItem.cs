@@ -13,9 +13,17 @@ namespace Lab1
             Value = value;
         }
 
+        public string ToString(string format)
+        {
+            string time = T.ToString(format);
+            string value = Value.ToString(format);
+            string length = Value.Length().ToString(format);
+            return $"({time} : {value} ({length}))";
+        }
+
         public override string ToString()
         {
-            return $"({T} : {Value})";
+            return ToString(null);
         }
     }
 }

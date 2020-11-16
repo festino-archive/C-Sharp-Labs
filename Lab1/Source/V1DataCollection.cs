@@ -1,11 +1,13 @@
 ﻿using Lab1.Source;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 
 namespace Lab1
 {
-    class V1DataCollection : V1Data
+    class V1DataCollection : V1Data, IEnumerable<DataItem>
     {
         public List<DataItem> Values { get; } = new List<DataItem>();
 
@@ -41,14 +43,25 @@ namespace Lab1
             return $"{GetType().Name} {{{base.ToString()}, {Values.Count}}}";
         }
 
+        public override string ToLongString(string format)
+        {
+            string valuesStr = string.Join("\n\t", from value in Values select value.ToString(format));
+            return $"{ToString()} : {{\n\t{valuesStr}\n}}";
+        }
+
         public override string ToLongString()
         {
-            string str = "\n";
-            foreach (DataItem item in Values)
-            {
-                str += $"\t{{{item.T} : {item.Value}}}\n";
-            }
-            return $"{ToString()} : {{{str}}}";
+            return ToLongString(null);
+        }
+
+        public IEnumerator<DataItem> GetEnumerator()
+        {
+            return ((IEnumerable<DataItem>)Values).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable)Values).GetEnumerator();
         }
     }
 }

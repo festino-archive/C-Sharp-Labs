@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Lab1
 {
@@ -50,8 +51,19 @@ namespace Lab1
 
         public override string ToString()
         {
-            string res = "\t" + string.Join<V1Data>("\n\t", DataSets) + "\n";
-            return $"{GetType().Name} {{\n{res}}}";
+            string res = string.Join("\n\t", DataSets);
+            return $"{GetType().Name} {{\n\t{res}\n}}";
+        }
+
+        public string ToLongString(string format)
+        {
+            string res = string.Join("\n\t", from dataSet in DataSets select dataSet.ToLongString(format));
+            return $"{GetType().Name} {{\n\t{res}\n}}";
+        }
+
+        public string ToLongString()
+        {
+            return ToLongString(null);
         }
 
         public IEnumerator GetEnumerator()

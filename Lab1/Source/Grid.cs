@@ -18,9 +18,16 @@
             return TimeStart + n * TimeStep;
         }
 
+        public string ToString(string format)
+        {
+            string timeStart = TimeStart.ToString(format);
+            string timeStep = TimeStep.ToString(format);
+            return GetType().Name + $"{{{timeStart}, {timeStep}, {Count}}}";
+        }
+
         public override string ToString()
         {
-            return GetType().Name + $"{{{TimeStart}, {TimeStep}, {Count}}}";
+            return ToString(null);
         }
     }
 }
