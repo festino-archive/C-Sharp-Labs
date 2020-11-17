@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Lab1
 {
-    abstract class V1Data
+    abstract class V1Data : IEnumerable<DataItem>
     {
         public string Info { get; }
         public DateTime Date { get; }
@@ -20,5 +22,11 @@ namespace Lab1
         }
         public abstract string ToLongString();
         public abstract string ToLongString(string format);
+        public abstract IEnumerator<DataItem> GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
     }
 }

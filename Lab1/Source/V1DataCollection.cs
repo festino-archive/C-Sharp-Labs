@@ -54,14 +54,9 @@ namespace Lab1
             return ToLongString(null);
         }
 
-        public IEnumerator<DataItem> GetEnumerator()
+        public override IEnumerator<DataItem> GetEnumerator()
         {
             return ((IEnumerable<DataItem>)Values).GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return ((IEnumerable)Values).GetEnumerator();
         }
     }
 }
