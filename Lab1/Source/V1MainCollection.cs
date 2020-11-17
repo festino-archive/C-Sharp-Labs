@@ -1,5 +1,4 @@
-﻿using Lab1.Source;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +10,18 @@ namespace Lab1
         private List<V1Data> DataSets = new List<V1Data>();
 
         public int Count { get => DataSets.Count; }
+        public float MaxLength { get => DataSets.Max(dataSet => dataSet.Max(x => x.Value.Length())); }
+        public DataItem MaxValue { get => DataSets.SelectMany(x => x).Aggregate((max, v) => v.Value.LengthSquared() > max.Value.LengthSquared() ? v : max); }
+        public IEnumerable<float> Dublicates
+        {
+            get
+            {
+                return DataSets.SelectMany(dataSet => dataSet)
+                        .GroupBy(v => v.T)
+                        .Where(g => g.Count() > 1)
+                        .Select(g => g.Key);
+            }
+        }
 
         public void Add(V1Data item)
         {
