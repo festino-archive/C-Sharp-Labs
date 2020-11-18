@@ -4,7 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
 using System.IO;
-using System.Globalization;
 
 namespace Lab1
 {
@@ -25,7 +24,7 @@ namespace Lab1
          * date ("")
          * grid (start step count)
          * vector values (3 float each line, "count" times)*/
-        public static V1DataOnGrid FromFile(string filename) // no base constructor
+        public static V1DataOnGrid FromFile(string filename)
         {
             FileStream fs = null;
             V1DataOnGrid dataSet = null;
@@ -39,11 +38,10 @@ namespace Lab1
                 if (info == null)
                     throw new Exception("no info");
 
-                //System.Console.WriteLine(new DateTime(2004, 10, 2).ToString(CultureInfo.GetCultureInfo("ru")));
                 parsingArg = istream.ReadLine();
                 if (parsingArg == null)
                     throw new Exception("no date");
-                DateTime date = DateTime.Parse(parsingArg, CultureInfo.GetCultureInfo("ru"));
+                DateTime date = DateTime.Parse(parsingArg, DATE_FORMAT);
 
                 string[] gridInfo = istream.ReadLine().Split(' ');
                 if (gridInfo.Length != 3)
@@ -119,9 +117,14 @@ namespace Lab1
             return res.ToArray();
         }
 
+        public string ToString(string format)
+        {
+            return $"{GetType().Name} {{{base.ToString()}, {Grid.ToString(format)}}}";
+        }
+
         public override string ToString()
         {
-            return $"{GetType().Name} {{{base.ToString()}, {Grid}}}";
+            return ToString(null);
         }
 
         public override string ToLongString(string format)
@@ -134,7 +137,7 @@ namespace Lab1
                 string length = Values[i].Length().ToString(format);
                 gridStr += $"\t{{{time} : {value} ({length})}}\n"; // DataItem.ToString(format) duplicate
             }
-            return $"{ToString()} : {{{gridStr}}}"; // ToString(format) for Grid data?
+            return $"{ToString(format)} : {{{gridStr}}}";
         }
 
         public override string ToLongString()

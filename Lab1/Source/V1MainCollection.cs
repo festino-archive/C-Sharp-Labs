@@ -10,8 +10,19 @@ namespace Lab1
         private List<V1Data> DataSets = new List<V1Data>();
 
         public int Count { get => DataSets.Count; }
-        public float MaxLength { get => DataSets.Max(dataSet => dataSet.Max(x => x.Value.Length())); }
-        public DataItem MaxValue { get => DataSets.SelectMany(x => x).Aggregate((max, v) => v.Value.LengthSquared() > max.Value.LengthSquared() ? v : max); }
+        public float MaxLength {
+            get => DataSets.Max(dataSet =>
+                dataSet.Count() == 0 ? 0 : dataSet.Max(x => x.Value.Length())
+            );
+        }
+        public DataItem MaxValue {
+            get
+            {
+                var united = DataSets.SelectMany(x => x);
+                if (united.Count() == 0) return new DataItem();
+                return united.Aggregate((max, v) => v.Value.LengthSquared() > max.Value.LengthSquared() ? v : max);
+            }
+        }
         public IEnumerable<float> Dublicates
         {
             get
@@ -58,6 +69,8 @@ namespace Lab1
                 data.InitRandom(10 + 2 * i, 0, 100, -1, 1);
                 Add(data);
             }
+            Add(new V1DataOnGrid($"DoG_empty", DateTime.Now, new Grid(0, 1f, 0)));
+            Add(new V1DataCollection($"DC_empty", DateTime.Now));
         }
 
         public override string ToString()
