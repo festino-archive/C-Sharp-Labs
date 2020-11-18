@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Numerics;
+using System.Threading;
+using System.Globalization;
 
 namespace Lab1
 {
@@ -7,6 +9,8 @@ namespace Lab1
     {
         static void Main(string[] args)
         {
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("EN-US");
+
             // 1
             Console.WriteLine("[1]\n");
             float t1 = 0.001f;
@@ -32,6 +36,11 @@ namespace Lab1
             PrintNearZero(mainColl, 0.1f);
             Console.WriteLine("\n[3] eps=0.5\n");
             PrintNearZero(mainColl, 0.5f);
+
+            // 4
+            Console.WriteLine("\n\n\n[4]\n");
+            V1DataOnGrid dataFromFile = V1DataOnGrid.FromFile("grid-1.txt");
+            Console.WriteLine(dataFromFile.ToLongString("f4"));
         }
 
         static void PrintNearZero(V1MainCollection mainColl, float eps)

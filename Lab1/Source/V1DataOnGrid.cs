@@ -3,6 +3,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
+using System.IO;
+using System.Globalization;
 
 namespace Lab1
 {
@@ -16,6 +18,72 @@ namespace Lab1
         {
             Grid = grid;
             Values = new Vector3[grid.Count];
+        }
+
+        /* format:
+         * info line
+         * date ("")
+         * grid (start step count)
+         * vector values (3 float each line, "count" times)*/
+        public static V1DataOnGrid FromFile(string filename) // no base constructor
+        {
+            FileStream fs = null;
+            V1DataOnGrid dataSet = null;
+            string parsingArg = null;
+            try
+            {
+                fs = new FileStream(filename, FileMode.Open);
+                StreamReader istream = new StreamReader(fs);
+
+                string info = istream.ReadLine();
+                if (info == null)
+                    throw new Exception("no info");
+
+                //System.Console.WriteLine(new DateTime(2004, 10, 2).ToString(CultureInfo.GetCultureInfo("ru")));
+                parsingArg = istream.ReadLine();
+                if (parsingArg == null)
+                    throw new Exception("no date");
+                DateTime date = DateTime.Parse(parsingArg, CultureInfo.GetCultureInfo("ru"));
+
+                string[] gridInfo = istream.ReadLine().Split(' ');
+                if (gridInfo.Length != 3)
+                    throw new Exception($"grid line parts count {gridInfo.Length} != 3");
+                parsingArg = gridInfo[0];
+                float timeStart = float.Parse(parsingArg);
+                parsingArg = gridInfo[1];
+                float timeStep = float.Parse(parsingArg);
+                parsingArg = gridInfo[2];
+                int count = int.Parse(parsingArg);
+                Grid grid = new Grid(timeStart, timeStep, count);
+
+                dataSet = new V1DataOnGrid(info, date, grid);
+                for (int i = 0; i < dataSet.Values.Length; i++)
+                {
+                    string[] vecComponents = istream.ReadLine().Split(' ');
+                    if (vecComponents.Length != 3)
+                        throw new Exception($"{i+1} Values line component count {vecComponents.Length} != 3");
+                    parsingArg = vecComponents[0];
+                    float v1 = float.Parse(parsingArg);
+                    parsingArg = vecComponents[1];
+                    float v2 = float.Parse(parsingArg);
+                    parsingArg = vecComponents[2];
+                    float v3 = float.Parse(parsingArg);
+                    dataSet.Values[i] = new Vector3(v1, v2, v3);
+                }
+            }
+            catch (Exception e)
+            {
+                dataSet = null;
+                System.Console.WriteLine($"Parse error: {e.Message}\n(in V1DataOnGrid, on \"{filename}\")");
+                if (parsingArg != null && e is FormatException)
+                    System.Console.WriteLine($"(while parsing \"{parsingArg}\")");
+            }
+            finally
+            {
+                if (fs != null)
+                    fs.Close();
+            }
+            return dataSet;
         }
 
         public void InitRandom(float minValue, float maxValue)
