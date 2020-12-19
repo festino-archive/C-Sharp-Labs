@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
 namespace Lab1
 {
     class V1MainCollection : IEnumerable<V1Data>
     {
-        private List<V1Data> DataSets = new List<V1Data>();
+        private readonly List<V1Data> DataSets = new List<V1Data>();
+        public event DataChangedEventHandler DataChanged;
 
         public int Count { get => DataSets.Count; }
         public float MaxLength {
@@ -33,10 +35,23 @@ namespace Lab1
                         .Select(g => g.Key);
             }
         }
+        public V1Data this[int index]
+        {
+            get => DataSets[index];
+            set
+            {
+                DataChanged(this, new DataChangedEventArgs(ChangeInfo.Replace, DataSets[index].Info));
+                DataSets[index].PropertyChanged -= onPropertyChanged;
+                value.PropertyChanged += onPropertyChanged;
+                DataSets[index] = value;
+            }
+        }
 
         public void Add(V1Data item)
         {
             DataSets.Add(item);
+            item.PropertyChanged += onPropertyChanged;
+            DataChanged(this, new DataChangedEventArgs(ChangeInfo.Add, item.Info));
         }
 
         public bool Remove(string id, DateTime dateTime)
@@ -46,7 +61,10 @@ namespace Lab1
             {
                 if (DataSets[i].Info.Equals(id) && DataSets[i].Date.Equals(dateTime))
                 {
+                    V1Data item = DataSets[i];
                     DataSets.RemoveAt(i);
+                    item.PropertyChanged -= onPropertyChanged;
+                    DataChanged(this, new DataChangedEventArgs(ChangeInfo.Remove, item.Info));
                     res = true;
                 }
             }
@@ -63,7 +81,7 @@ namespace Lab1
                 data.InitRandom(-1, 1);
                 Add(data);
             }
-            for (int i = 1; i <= collectionCount; i++)
+            for (int i = onGridCount; i < onGridCount + collectionCount; i++)
             {
                 V1DataCollection data = new V1DataCollection($"id={i}", DateTime.Now);
                 data.InitRandom(10 + 2 * i, 0, 100, -1, 1);
@@ -98,6 +116,12 @@ namespace Lab1
         IEnumerator<V1Data> IEnumerable<V1Data>.GetEnumerator()
         {
             return ((IEnumerable<V1Data>)DataSets).GetEnumerator();
+        }
+
+        private void onPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            string info = (sender as V1Data).Info + "[" + e.PropertyName + "]";
+            DataChanged?.Invoke(this, new DataChangedEventArgs(ChangeInfo.ItemChanged, info));
         }
     }
 }
