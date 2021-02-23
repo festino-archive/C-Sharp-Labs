@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -41,9 +42,34 @@ namespace Lab_UI
             OnCollectionChange(this, null);
         }
 
-        private void Window_Closed(object sender, EventArgs e)
+        private bool Save()
         {
+            SaveFileDialog dialog = new SaveFileDialog();
+            dialog.InitialDirectory = Directory.GetCurrentDirectory();
+            dialog.RestoreDirectory = true;
+            dialog.Filter = "dat files (*.dat)|*.dat|All files (*.*)|*.*";
+            if (dialog.ShowDialog() == true)
+            {
+                MainColl.Save(dialog.FileName);
+                return true;
+            }
+            return false;
+        }
 
+        private bool Open()
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.InitialDirectory = Directory.GetCurrentDirectory();
+            dialog.RestoreDirectory = true;
+            dialog.Filter = "dat files (*.dat)|*.dat|All files (*.*)|*.*";
+            if (dialog.ShowDialog() == true)
+            {
+                V1MainCollection coll = new V1MainCollection();
+                coll.Load(dialog.FileName);
+                SetMainCollection(coll);
+                return true;
+            }
+            return false;
         }
 
         private void OnCollectionChange(object sender, NotifyCollectionChangedEventArgs args)
@@ -56,33 +82,67 @@ namespace Lab_UI
             textBlock_CollProp.Text = "Максимальное значение длины вектора поля: " + MainColl.MaxLength.ToString();
         }
 
+        private bool SuggestSave()
+        {
+            if (!MainColl.HasUnsavedChanges)
+                return true;
+
+            string caption = "Несохранённые изменения";
+            string message = "Данные были изменены. Вы хотите сохранить их?";//"Есть несохранённые изменения, которые будут утеряны. Сохранить перед выполнением?";
+            MessageBoxButton buttons = MessageBoxButton.YesNoCancel;
+            MessageBoxResult res = MessageBox.Show(message, caption, buttons);
+            if (res == MessageBoxResult.No)
+                return true;
+            if (res == MessageBoxResult.Cancel)
+                return false;
+            if (res == MessageBoxResult.Yes)
+                try
+                {
+                    return Save();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    return false;
+                }
+            return false;
+        }
+
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+            if (!SuggestSave())
+                e.Cancel = true;
+        }
+
         private void Item_New_Click(object sender, RoutedEventArgs e)
         {
-            SetMainCollection(new V1MainCollection());
+            if (SuggestSave())
+                SetMainCollection(new V1MainCollection());
         }
 
         private void Item_Open_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.InitialDirectory = Directory.GetCurrentDirectory();
-            dialog.RestoreDirectory = true;
-            dialog.Filter = "dat files (*.dat)|*.dat|All files (*.*)|*.*";
-            if (dialog.ShowDialog() == true)
+            try
             {
-                try {
-                    V1MainCollection coll = new V1MainCollection();
-                    coll.Load(dialog.FileName);
-                    SetMainCollection(coll);
-                }
-                catch (Exception) {
-
-                }
+                if (SuggestSave())
+                    Open();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
 
         private void Item_SaveAs_Click(object sender, RoutedEventArgs e)
         {
-            SetMainCollection(new V1MainCollection());
+            try
+            {
+                Save();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void Item_Defaults_Click(object sender, RoutedEventArgs e)
@@ -117,9 +177,9 @@ namespace Lab_UI
                     V1DataOnGrid coll = V1DataOnGrid.FromFile(dialog.FileName);
                     MainColl.Add(coll);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-
+                    MessageBox.Show(ex.Message);
                 }
             }
         }

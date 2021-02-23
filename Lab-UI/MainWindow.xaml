@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Lab_UI"
         mc:Ignorable="d"
-        Title="Lab" Height="450" Width="800" Closed="Window_Closed">
+        Title="Lab" Height="450" Width="800"
+        Closing="Window_Closing">
     <DockPanel>
         <Menu Margin="0,0,0,0" HorizontalAlignment="Stretch" DockPanel.Dock="Top">
             <MenuItem x:Name="Menu_File" Header="File" FontStyle="Normal" FontWeight="Normal" FontSize="13">
