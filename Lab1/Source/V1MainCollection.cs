@@ -2,16 +2,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Specialized;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Lab1
 {
-    class V1MainCollection : IEnumerable<V1Data>
+    public class V1MainCollection : IEnumerable<V1Data>, INotifyCollectionChanged
     {
         private List<V1Data> DataSets = new List<V1Data>();
 
+        [field: NonSerialized]
+        public event NotifyCollectionChangedEventHandler CollectionChanged;
+        public bool HasUnsavedChanges { get; private set; }
+
         public int Count { get => DataSets.Count; }
         public float MaxLength {
-            get => DataSets.Max(dataSet =>
+            get => DataSets.Count() == 0 ? 0 : DataSets.Max(dataSet =>
                 dataSet.Count() == 0 ? 0 : dataSet.Max(x => x.Value.Length())
             );
         }
@@ -34,9 +41,54 @@ namespace Lab1
             }
         }
 
+        public V1MainCollection()
+        {
+            CollectionChanged += OnChange;
+        }
+
+        private void OnChange(object sender, NotifyCollectionChangedEventArgs args)
+        {
+            HasUnsavedChanges = true;
+        }
+
+        public void Save(string filename)
+        {
+            FileStream fileStream = null;
+            try
+            {
+                fileStream = File.Open(filename, FileMode.OpenOrCreate);
+                BinaryFormatter serializer = new BinaryFormatter();
+                serializer.Serialize(fileStream, DataSets);
+                HasUnsavedChanges = false;
+            }
+            finally
+            {
+                if (fileStream != null)
+                    fileStream.Close();
+            }
+        }
+
+        public void Load(string filename)
+        {
+            FileStream fileStream = null;
+
+            try
+            {
+                fileStream = File.OpenRead(filename);
+                BinaryFormatter serializer = new BinaryFormatter();
+                DataSets = (List<V1Data>)serializer.Deserialize(fileStream);
+            }
+            finally
+            {
+                if (fileStream != null)
+                    fileStream.Close();
+            }
+        }
+
         public void Add(V1Data item)
         {
             DataSets.Add(item);
+            CollectionChanged?.Invoke(this, null);
         }
 
         public bool Remove(string id, DateTime dateTime)
@@ -48,6 +100,7 @@ namespace Lab1
                 {
                     DataSets.RemoveAt(i);
                     res = true;
+                    CollectionChanged?.Invoke(this, null);
                 }
             }
             return res;
@@ -71,6 +124,7 @@ namespace Lab1
             }
             Add(new V1DataOnGrid($"DoG_empty", DateTime.Now, new Grid(0, 1f, 0)));
             Add(new V1DataCollection($"DC_empty", DateTime.Now));
+            CollectionChanged?.Invoke(this, null);
         }
 
         public override string ToString()

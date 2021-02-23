@@ -1,6 +1,9 @@
-﻿namespace Lab1
+﻿using System;
+
+namespace Lab1
 {
-    struct Grid
+    [Serializable]
+    public struct Grid
     {
         public float TimeStart { get; }
         public float TimeStep { get; }

@@ -2,7 +2,7 @@
 
 namespace Lab1.Source
 {
-    static class RandomUtils
+    public static class RandomUtils
     {
         static Random random;
 

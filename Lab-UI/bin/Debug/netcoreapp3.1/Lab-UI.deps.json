@@ -1,0 +1,36 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v3.1",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v3.1": {
+      "Lab-UI/1.0.0": {
+        "dependencies": {
+          "Lab-Core": "1.0.0"
+        },
+        "runtime": {
+          "Lab-UI.dll": {}
+        }
+      },
+      "Lab-Core/1.0.0": {
+        "runtime": {
+          "Lab-Core.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Lab-UI/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Lab-Core/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

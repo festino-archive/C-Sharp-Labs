@@ -4,10 +4,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
 using System.IO;
+using System.Runtime.Serialization;
 
 namespace Lab1
 {
-    class V1DataOnGrid : V1Data, IEnumerable<DataItem>
+    [Serializable]
+    public class V1DataOnGrid : V1Data, IEnumerable<DataItem>, ISerializable
     {
         public Grid Grid { get; }
         public Vector3[] Values { get; }
@@ -21,7 +23,7 @@ namespace Lab1
 
         /* format:
          * info line
-         * date ("")
+         * date ("ru" format)
          * grid (start step count)
          * vector values (3 float each line, "count" times)*/
         public static V1DataOnGrid FromFile(string filename)
@@ -143,6 +145,33 @@ namespace Lab1
         public override string ToLongString()
         {
             return ToLongString(null);
+        }
+
+        public V1DataOnGrid(SerializationInfo info, StreamingContext context)
+                : base(info.GetString("base_Info"), info.GetDateTime("base_Date"))
+        {
+            Grid = (Grid)info.GetValue("grid", typeof(Grid));
+            Values = new Vector3[Grid.Count];
+            for (int i = 0; i < Grid.Count; i++)
+            {
+                float x = info.GetSingle("v_" + i.ToString() + "_X");
+                float y = info.GetSingle("v_" + i.ToString() + "_Y");
+                float z = info.GetSingle("v_" + i.ToString() + "_Z");
+                Values[i] = new Vector3(x, y, z);
+            }
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("base_Info", Info);
+            info.AddValue("base_Date", Date);
+            info.AddValue("grid", Grid, typeof(Grid));
+            for (int i = 0; i < Grid.Count; i++)
+            {
+                info.AddValue("v_" + i.ToString() + "_X", Values[i].X);
+                info.AddValue("v_" + i.ToString() + "_Y", Values[i].Y);
+                info.AddValue("v_" + i.ToString() + "_Z", Values[i].Z);
+            }
         }
 
         public override IEnumerator<DataItem> GetEnumerator()

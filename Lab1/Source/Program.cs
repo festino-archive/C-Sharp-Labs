@@ -24,6 +24,11 @@ namespace Lab1
             Console.WriteLine("Max vector length : " + mainColl.MaxLength);
             Console.WriteLine("DataItem with max length : " + mainColl.MaxValue.ToString("f5"));
             Console.WriteLine("Time dublicates : " + string.Join(", ", mainColl.Dublicates));
+
+            Console.WriteLine("\n\n\n[3]\n");
+            mainColl.Save("test.dat");
+            mainColl.Load("test.dat");
+            Console.WriteLine(mainColl);
         }
 
         static void PrintNearZero(V1MainCollection mainColl, float eps)

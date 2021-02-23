@@ -5,7 +5,8 @@ using System.Globalization;
 
 namespace Lab1
 {
-    abstract class V1Data : IEnumerable<DataItem>
+    [Serializable]
+    public abstract class V1Data : IEnumerable<DataItem>
     {
         protected static readonly CultureInfo DATE_FORMAT = CultureInfo.GetCultureInfo("ru");
 

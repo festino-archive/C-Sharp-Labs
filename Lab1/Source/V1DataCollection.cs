@@ -7,7 +7,8 @@ using System.Numerics;
 
 namespace Lab1
 {
-    class V1DataCollection : V1Data, IEnumerable<DataItem>
+    [Serializable]
+    public class V1DataCollection : V1Data, IEnumerable<DataItem>
     {
         public List<DataItem> Values { get; } = new List<DataItem>();
 
