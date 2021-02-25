@@ -79,6 +79,7 @@ namespace Lab1
                 fileStream = File.OpenRead(filename);
                 BinaryFormatter serializer = new BinaryFormatter();
                 DataSets = (List<V1Data>)serializer.Deserialize(fileStream);
+                CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
             }
             finally
             {

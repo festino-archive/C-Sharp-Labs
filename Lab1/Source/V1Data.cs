@@ -1,17 +1,43 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 
 namespace Lab1
 {
     [Serializable]
-    public abstract class V1Data : IEnumerable<DataItem>
+    public abstract class V1Data : IEnumerable<DataItem>, INotifyPropertyChanged
     {
         protected static readonly CultureInfo DATE_FORMAT = CultureInfo.GetCultureInfo("ru");
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Info { get; }
-        public DateTime Date { get; }
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        protected string info;
+        protected DateTime date;
+
+        public string Info
+        {
+            get { return info; }
+            set
+            {
+                info = value;
+                OnPropertyChanged("Info");
+            }
+        }
+        public DateTime Date
+        {
+            get { return date; }
+            set
+            {
+                date = value;
+                OnPropertyChanged("Date");
+            }
+        }
 
         public V1Data(string info, DateTime date)
         {
