@@ -17,12 +17,14 @@ namespace Lab1
         public bool HasUnsavedChanges { get; private set; }
 
         public int Count { get => DataSets.Count; }
-        public float MaxLength {
+        public float MaxLength
+        {
             get => DataSets.Count() == 0 ? 0 : DataSets.Max(dataSet =>
                 dataSet.Count() == 0 ? 0 : dataSet.Max(x => x.Value.Length())
             );
         }
-        public DataItem MaxValue {
+        public DataItem MaxValue
+        {
             get
             {
                 var united = DataSets.SelectMany(x => x);
@@ -88,7 +90,7 @@ namespace Lab1
         public void Add(V1Data item)
         {
             DataSets.Add(item);
-            CollectionChanged?.Invoke(this, null);
+            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
         public bool Remove(string id, DateTime dateTime)
@@ -100,7 +102,7 @@ namespace Lab1
                 {
                     DataSets.RemoveAt(i);
                     res = true;
-                    CollectionChanged?.Invoke(this, null);
+                    CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
                 }
             }
             return res;
@@ -124,7 +126,6 @@ namespace Lab1
             }
             Add(new V1DataOnGrid($"DoG_empty", DateTime.Now, new Grid(0, 1f, 0)));
             Add(new V1DataCollection($"DC_empty", DateTime.Now));
-            CollectionChanged?.Invoke(this, null);
         }
 
         public override string ToString()

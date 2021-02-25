@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,18 +29,31 @@ namespace Lab_UI
     public partial class MainWindow : Window
     {
         private V1MainCollection MainColl;
+        private CollectionViewSource View_Coll;
+        private CollectionViewSource View_Grid;
 
         public MainWindow()
         {
             InitializeComponent();
-            SetMainCollection(new V1MainCollection());
         }
 
         private void SetMainCollection(V1MainCollection coll)
         {
-            MainColl = coll;
-            DataContext = MainColl;
+            if (MainColl != null)
+                MainColl.CollectionChanged -= OnCollectionChange;
             coll.CollectionChanged += OnCollectionChange;
+            MainColl = coll;
+
+            View_Coll = new CollectionViewSource();
+            View_Coll.Source = MainColl;
+            View_Coll.View.Filter = (c) => c is V1DataCollection;
+            listBox_DataCollection.ItemsSource = View_Coll.View;
+
+            View_Grid = new CollectionViewSource();
+            View_Grid.Source = MainColl;
+            View_Grid.View.Filter = (c) => c is V1DataOnGrid;
+            listBox_DataOnGrid.ItemsSource = View_Grid.View;
+
             OnCollectionChange(this, null);
         }
 
@@ -72,23 +87,13 @@ namespace Lab_UI
             return false;
         }
 
-        private void OnCollectionChange(object sender, NotifyCollectionChangedEventArgs args)
-        {
-            listBox_Main.Items.Clear();
-            foreach (V1Data data in MainColl)
-            {
-                listBox_Main.Items.Add(data.ToString());
-            }
-            textBlock_CollProp.Text = "Максимальное значение длины вектора поля: " + MainColl.MaxLength.ToString();
-        }
-
         private bool SuggestSave()
         {
             if (!MainColl.HasUnsavedChanges)
                 return true;
 
             string caption = "Несохранённые изменения";
-            string message = "Данные были изменены. Вы хотите сохранить их?";//"Есть несохранённые изменения, которые будут утеряны. Сохранить перед выполнением?";
+            string message = "Данные были изменены. Вы хотите сохранить их?";
             MessageBoxButton buttons = MessageBoxButton.YesNoCancel;
             MessageBoxResult res = MessageBox.Show(message, caption, buttons);
             if (res == MessageBoxResult.No)
@@ -108,11 +113,26 @@ namespace Lab_UI
             return false;
         }
 
+        private void OnCollectionChange(object sender, NotifyCollectionChangedEventArgs args)
+        {
+            DataContext = null;
+            DataContext = MainColl;
+            textBlock_CollProp.Text = "Максимальное значение длины вектора поля: " + MainColl.MaxLength.ToString();
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("EN-US");
+            SetMainCollection(new V1MainCollection());
+        }
+
         private void Window_Closing(object sender, CancelEventArgs e)
         {
             if (!SuggestSave())
                 e.Cancel = true;
         }
+
+        // menu event handlers
 
         private void Item_New_Click(object sender, RoutedEventArgs e)
         {
@@ -188,21 +208,8 @@ namespace Lab_UI
         {
             if (listBox_Main.SelectedItem != null)
             {
-                int index = listBox_Main.SelectedIndex;
-                V1Data data = null;
-                foreach (V1Data d in MainColl)
-                {
-                    if (index == 0)
-                    {
-                        data = d;
-                        break;
-                    }
-                    index--;
-                }
-                if (data != null)
-                {
-                    MainColl.Remove(data.Info, data.Date);
-                }
+                V1Data data = (V1Data)listBox_Main.SelectedItem;
+                MainColl.Remove(data.Info, data.Date);
             }
         }
     }
