@@ -29,13 +29,14 @@ namespace Lab_UI
     public partial class MainWindow : Window
     {
         private V1MainCollection MainColl;
-        private CollectionViewSource View_Coll;
-        private CollectionViewSource View_Grid;
 
         public MainWindow()
         {
             InitializeComponent();
         }
+
+        private void FilterDataOnGrid(object c, FilterEventArgs e) => e.Accepted = e.Item is V1DataOnGrid;
+        private void FilterDataCollection(object c, FilterEventArgs e) => e.Accepted = e.Item is V1DataCollection;
 
         private void SetMainCollection(V1MainCollection coll)
         {
@@ -43,16 +44,6 @@ namespace Lab_UI
                 MainColl.CollectionChanged -= OnCollectionChange;
             coll.CollectionChanged += OnCollectionChange;
             MainColl = coll;
-
-            View_Coll = new CollectionViewSource();
-            View_Coll.Source = MainColl;
-            View_Coll.View.Filter = (c) => c is V1DataCollection;
-            listBox_DataCollection.ItemsSource = View_Coll.View;
-
-            View_Grid = new CollectionViewSource();
-            View_Grid.Source = MainColl;
-            View_Grid.View.Filter = (c) => c is V1DataOnGrid;
-            listBox_DataOnGrid.ItemsSource = View_Grid.View;
 
             OnCollectionChange(this, null);
         }

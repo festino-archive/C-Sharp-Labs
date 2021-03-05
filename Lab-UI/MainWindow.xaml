@@ -9,6 +9,8 @@
         Loaded="Window_Loaded"
         Closing="Window_Closing">
     <Window.Resources>
+        <CollectionViewSource  Source="{Binding}" x:Key="listDataOnGrid" Filter="FilterDataOnGrid"/>
+        <CollectionViewSource  Source="{Binding}" x:Key="listDataCollection" Filter="FilterDataCollection"/>
         <local:DataItemToCoordConverter x:Key="DataItemToCoord"/>
         <local:DataItemToDataConverter x:Key="DataItemToData"/>
         <local:DataOnGridToStringConverter x:Key="DataOnGridToString"/>
@@ -60,7 +62,7 @@
                     <RowDefinition Height="6*"/>
                 </Grid.RowDefinitions>
                 <Label Content="Элементы DataCollection"/>
-                <ListBox x:Name="listBox_DataCollection" Grid.Row="1" Margin="5,0,5,5"/>
+                <ListBox x:Name="listBox_DataCollection" Grid.Row="1" Margin="5,0,5,5" ItemsSource="{Binding Source={StaticResource listDataCollection}}"/>
                 <Label Content="Выбранная коллекция" Grid.Row="2" Margin="0,-5,-5,-5"/>
                 <ListBox x:Name="listBox_Details" Grid.Row="3" Margin="5,5,5,5" ItemsSource="{Binding ElementName=listBox_DataCollection, Path=SelectedItem}" ItemTemplate="{StaticResource templateDataItem}"/>
             </Grid>
@@ -72,7 +74,7 @@
                     <RowDefinition Height="25"/>
                 </Grid.RowDefinitions>
                 <Label Content="Элементы DataOnGrid" Margin="0,0,0,0"/>
-                <ListBox x:Name="listBox_DataOnGrid" Grid.Row="1" Margin="5,0,5,5"/>
+                <ListBox x:Name="listBox_DataOnGrid" Grid.Row="1" Margin="5,0,5,5" ItemsSource="{Binding Source={StaticResource listDataOnGrid}}"/>
                 <TextBlock x:Name="textBlock_GridFirst" Grid.Row="2" Margin="5,5,5,5" Text="{Binding ElementName=listBox_DataOnGrid, Path=SelectedItem, Converter={StaticResource DataOnGridToString}, ConverterParameter={StaticResource IndexFirst}}"/>
                 <TextBlock x:Name="textBlock_GridLast" Grid.Row="3" Margin="5,5,5,5" Text="{Binding ElementName=listBox_DataOnGrid, Path=SelectedItem, Converter={StaticResource DataOnGridToString}, ConverterParameter={StaticResource IndexLast}}"/>
             </Grid>
