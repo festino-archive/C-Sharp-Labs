@@ -80,6 +80,7 @@ namespace Lab1
                 BinaryFormatter serializer = new BinaryFormatter();
                 DataSets = (List<V1Data>)serializer.Deserialize(fileStream);
                 CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+                HasUnsavedChanges = false;
             }
             finally
             {
