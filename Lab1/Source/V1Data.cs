@@ -10,6 +10,7 @@ namespace Lab1
     public abstract class V1Data : IEnumerable<DataItem>, INotifyPropertyChanged
     {
         protected static readonly CultureInfo DATE_FORMAT = CultureInfo.GetCultureInfo("ru");
+        [field: NonSerialized]
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
