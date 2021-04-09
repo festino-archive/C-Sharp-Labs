@@ -17,6 +17,9 @@
         <CommandBinding Command="ApplicationCommands.Delete"
                     Executed="DeleteCommandHandler"
                     CanExecute="CanDeleteCommandHandler"/>
+        <CommandBinding Command="{x:Static local:MainWindow.AddCustomGridCommand}"
+                    Executed="AddCustomGridCommandHandler"
+                    CanExecute="CanAddCustomGridCommandHandler"/>
     </Window.CommandBindings>
     <Window.Resources>
         <CollectionViewSource Source="{Binding}" x:Key="listDataOnGrid" Filter="FilterDataOnGrid"/>
@@ -32,6 +35,12 @@
                 <TextBlock HorizontalAlignment="Left" Text="{Binding StringFormat=XYZ и длина: {0}, Converter={StaticResource DataItemToData}}" />
             </StackPanel>
         </DataTemplate>
+        <Style TargetType="TextBox">
+            <Setter Property="MinWidth" Value="50"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="Margin" Value="11,1,1,1"/>
+        </Style>
+        <local:DataOnGridBuilder x:Key="GridBuilder" />
     </Window.Resources>
     <DockPanel>
         <Menu Margin="0,0,0,0" HorizontalAlignment="Stretch" DockPanel.Dock="Top">
@@ -41,14 +50,21 @@
                 <MenuItem x:Name="Item_SaveAs" Header="Save As" Command="ApplicationCommands.Save"/>
             </MenuItem>
             <MenuItem Header="Edit" FontStyle="Normal" FontWeight="Normal" FontSize="13">
+                <MenuItem x:Name="Item_AddCustomGrid" Header="Add Custom V1DataOnGrid" Command="{x:Static local:MainWindow.AddCustomGridCommand}"/>
+                <MenuItem x:Name="Item_AddFromFile" Header="Add Element from File" Click="Item_AddFromFile_Click"/>
+                <MenuItem x:Name="Item_Remove" Header="Remove" Command="ApplicationCommands.Delete"/>
                 <MenuItem x:Name="Item_Defaults" Header="Add Defaults" Click="Item_Defaults_Click"/>
                 <MenuItem x:Name="Item_DefaultColl" Header="Add Default V1DataCollection" Click="Item_DefaultColl_Click"/>
                 <MenuItem x:Name="Item_DefaultGrid" Header="Add Default V1DataOnGrid" Click="Item_DefaultGrid_Click"/>
-                <MenuItem x:Name="Item_AddFromFile" Header="Add Element from File" Click="Item_AddFromFile_Click"/>
-                <MenuItem x:Name="Item_Remove" Header="Remove" Command="ApplicationCommands.Delete"/>
             </MenuItem>
         </Menu>
-        <Grid Grid.Row="1" Margin="5,0,5,5">
+        <ToolBar Margin="0,0,0,0" DockPanel.Dock="Top">
+            <Button Content="Open" Command="ApplicationCommands.Open"/>
+            <Button Content="Save" Command="ApplicationCommands.Save"/>
+            <Button Content="Add Custom" Command="{x:Static local:MainWindow.AddCustomGridCommand}"/>
+            <Button Content="Remove" Command="ApplicationCommands.Delete"/>
+        </ToolBar>
+        <Grid Grid.Row="2" Margin="5,0,5,5" Grid.IsSharedSizeScope="True">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
@@ -66,7 +82,7 @@
             </Grid>
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto" SharedSizeGroup="listDataGroup1"/>
                     <RowDefinition Height="4*"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="6*"/>
@@ -78,15 +94,43 @@
             </Grid>
             <Grid Grid.Column="2">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto" SharedSizeGroup="listDataGroup1"/>
                     <RowDefinition Height="1*"/>
                     <RowDefinition Height="25"/>
                     <RowDefinition Height="25"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <Label Content="Элементы DataOnGrid" Margin="0,0,0,0"/>
                 <ListBox x:Name="listBox_DataOnGrid" Grid.Row="1" Margin="5,0,5,5" ItemsSource="{Binding Source={StaticResource listDataOnGrid}}"/>
                 <TextBlock x:Name="textBlock_GridFirst" Grid.Row="2" Margin="5,5,5,5" Text="{Binding ElementName=listBox_DataOnGrid, Path=SelectedItem, Converter={StaticResource DataOnGridToString}, ConverterParameter={StaticResource IndexFirst}}"/>
                 <TextBlock x:Name="textBlock_GridLast" Grid.Row="3" Margin="5,5,5,5" Text="{Binding ElementName=listBox_DataOnGrid, Path=SelectedItem, Converter={StaticResource DataOnGridToString}, ConverterParameter={StaticResource IndexLast}}"/>
+                <Label Content="Создание нового DataOnGrid" Grid.Row="4" Margin="0,5,0,0"/>
+                <Grid Grid.Row="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Text="Имя" HorizontalAlignment="Left"/>
+                    <TextBlock Grid.Row="1" Text="Число узлов" HorizontalAlignment="Left"/>
+                    <TextBlock Grid.Row="2" Text="min" HorizontalAlignment="Left"/>
+                    <TextBlock Grid.Row="3" Text="max" HorizontalAlignment="Left"/>
+
+                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Source={StaticResource GridBuilder}, Path=Name,
+                         ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Source={StaticResource GridBuilder}, Path=Count,
+                         ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Source={StaticResource GridBuilder}, Path=MinValue,
+                         ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Source={StaticResource GridBuilder}, Path=MaxValue,
+                         ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"/>
+                </Grid>
             </Grid>
         </Grid>
     </DockPanel>

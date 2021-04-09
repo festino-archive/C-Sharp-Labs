@@ -20,6 +20,7 @@ namespace Lab_UI
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static RoutedCommand AddCustomGridCommand = new RoutedCommand("AddCustomGrid", typeof(MainWindow));
         private V1MainCollection MainColl;
 
         public MainWindow()
@@ -36,8 +37,14 @@ namespace Lab_UI
                 MainColl.CollectionChanged -= OnCollectionChange;
             coll.CollectionChanged += OnCollectionChange;
             MainColl = coll;
+            GetGridBuilder().SetMainCollection(MainColl);
 
             OnCollectionChange(this, null);
+        }
+
+        private DataOnGridBuilder GetGridBuilder()
+        {
+            return Resources["GridBuilder"] as DataOnGridBuilder;
         }
 
         private bool Save()
@@ -132,7 +139,7 @@ namespace Lab_UI
 
         private void CanSaveCommandHandler(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = MainColl.HasUnsavedChanges;
+            e.CanExecute = MainColl != null && MainColl.HasUnsavedChanges;
         }
 
         private void SaveCommandHandler(object sender, ExecutedRoutedEventArgs e)
@@ -149,7 +156,7 @@ namespace Lab_UI
 
         private void CanDeleteCommandHandler(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = listBox_Main.SelectedItem != null;
+            e.CanExecute = listBox_Main?.SelectedItem != null;
         }
 
         private void DeleteCommandHandler(object sender, ExecutedRoutedEventArgs e)
@@ -159,6 +166,16 @@ namespace Lab_UI
                 V1Data data = (V1Data)listBox_Main.SelectedItem;
                 MainColl.Remove(data.Info, data.Date);
             }
+        }
+
+        private void CanAddCustomGridCommandHandler(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = GetGridBuilder() != null && GetGridBuilder().Error == null;
+        }
+
+        private void AddCustomGridCommandHandler(object sender, ExecutedRoutedEventArgs e)
+        {
+            GetGridBuilder().BuildAndAdd();
         }
 
         private void Item_New_Click(object sender, RoutedEventArgs e)
