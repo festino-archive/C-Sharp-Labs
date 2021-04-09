@@ -80,6 +80,7 @@ namespace Lab1
                 BinaryFormatter serializer = new BinaryFormatter();
                 DataSets = (List<V1Data>)serializer.Deserialize(fileStream);
                 CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+                // could load corrupted data (Info=null or duplicates)
                 HasUnsavedChanges = false;
             }
             finally
@@ -89,8 +90,19 @@ namespace Lab1
             }
         }
 
+        public bool Contains(string id)
+        {
+            foreach (V1Data data in DataSets)
+                if (data.Info == id)
+                    return true;
+            return false;
+        }
+
         public void Add(V1Data item)
         {
+            if (Contains(item.Info))
+                // error?
+                return;
             DataSets.Add(item);
             CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
@@ -120,9 +132,9 @@ namespace Lab1
                 data.InitRandom(-1, 1);
                 Add(data);
             }
-            for (int i = 1; i <= collectionCount; i++)
+            for (int i = 0; i < collectionCount; i++)
             {
-                V1DataCollection data = new V1DataCollection($"id={i}", DateTime.Now);
+                V1DataCollection data = new V1DataCollection($"id={onGridCount + i}", DateTime.Now);
                 data.InitRandom(10 + 2 * i, 0, 100, -1, 1);
                 Add(data);
             }

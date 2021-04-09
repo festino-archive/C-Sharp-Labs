@@ -8,9 +8,19 @@
         Title="Lab" Height="519" Width="931"
         Loaded="Window_Loaded"
         Closing="Window_Closing">
+    <Window.CommandBindings>
+        <CommandBinding Command="ApplicationCommands.Open"
+                    Executed="OpenCommandHandler"/>
+        <CommandBinding Command="ApplicationCommands.Save"
+                    Executed="SaveCommandHandler"
+                    CanExecute="CanSaveCommandHandler"/>
+        <CommandBinding Command="ApplicationCommands.Delete"
+                    Executed="DeleteCommandHandler"
+                    CanExecute="CanDeleteCommandHandler"/>
+    </Window.CommandBindings>
     <Window.Resources>
-        <CollectionViewSource  Source="{Binding}" x:Key="listDataOnGrid" Filter="FilterDataOnGrid"/>
-        <CollectionViewSource  Source="{Binding}" x:Key="listDataCollection" Filter="FilterDataCollection"/>
+        <CollectionViewSource Source="{Binding}" x:Key="listDataOnGrid" Filter="FilterDataOnGrid"/>
+        <CollectionViewSource Source="{Binding}" x:Key="listDataCollection" Filter="FilterDataCollection"/>
         <local:DataItemToCoordConverter x:Key="DataItemToCoord"/>
         <local:DataItemToDataConverter x:Key="DataItemToData"/>
         <local:DataOnGridToStringConverter x:Key="DataOnGridToString"/>
@@ -27,15 +37,15 @@
         <Menu Margin="0,0,0,0" HorizontalAlignment="Stretch" DockPanel.Dock="Top">
             <MenuItem x:Name="Menu_File" Header="File" FontStyle="Normal" FontWeight="Normal" FontSize="13">
                 <MenuItem x:Name="Item_New" Header="New" Click="Item_New_Click"/>
-                <MenuItem x:Name="Item_Open" Header="Open" Click="Item_Open_Click"/>
-                <MenuItem x:Name="Item_SaveAs" Header="Save As" Click="Item_SaveAs_Click"/>
+                <MenuItem x:Name="Item_Open" Header="Open" Command="ApplicationCommands.Open"/>
+                <MenuItem x:Name="Item_SaveAs" Header="Save As" Command="ApplicationCommands.Save"/>
             </MenuItem>
             <MenuItem Header="Edit" FontStyle="Normal" FontWeight="Normal" FontSize="13">
                 <MenuItem x:Name="Item_Defaults" Header="Add Defaults" Click="Item_Defaults_Click"/>
                 <MenuItem x:Name="Item_DefaultColl" Header="Add Default V1DataCollection" Click="Item_DefaultColl_Click"/>
                 <MenuItem x:Name="Item_DefaultGrid" Header="Add Default V1DataOnGrid" Click="Item_DefaultGrid_Click"/>
                 <MenuItem x:Name="Item_AddFromFile" Header="Add Element from File" Click="Item_AddFromFile_Click"/>
-                <MenuItem x:Name="Item_Remove" Header="Remove" Click="Item_Remove_Click"/>
+                <MenuItem x:Name="Item_Remove" Header="Remove" Command="ApplicationCommands.Delete"/>
             </MenuItem>
         </Menu>
         <Grid Grid.Row="1" Margin="5,0,5,5">
