@@ -28,6 +28,18 @@ namespace Lab_UI
             InitializeComponent();
         }
 
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("EN-US");
+            SetMainCollection(new V1MainCollection());
+        }
+
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+            if (!SuggestSave())
+                e.Cancel = true;
+        }
+
         private void FilterDataOnGrid(object c, FilterEventArgs e) => e.Accepted = e.Item is V1DataOnGrid;
         private void FilterDataCollection(object c, FilterEventArgs e) => e.Accepted = e.Item is V1DataCollection;
 
@@ -35,8 +47,8 @@ namespace Lab_UI
         {
             if (MainColl != null)
                 MainColl.CollectionChanged -= OnCollectionChange;
-            coll.CollectionChanged += OnCollectionChange;
             MainColl = coll;
+            MainColl.CollectionChanged += OnCollectionChange;
             GetGridBuilder().SetMainCollection(MainColl);
 
             OnCollectionChange(this, null);
@@ -108,18 +120,6 @@ namespace Lab_UI
             DataContext = null;
             DataContext = MainColl;
             textBlock_CollProp.Text = "Максимальное значение длины вектора поля: " + MainColl.MaxLength.ToString();
-        }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            Thread.CurrentThread.CurrentCulture = new CultureInfo("EN-US");
-            SetMainCollection(new V1MainCollection());
-        }
-
-        private void Window_Closing(object sender, CancelEventArgs e)
-        {
-            if (!SuggestSave())
-                e.Cancel = true;
         }
 
         // menu event handlers

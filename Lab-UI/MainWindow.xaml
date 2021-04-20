@@ -40,6 +40,15 @@
             <Setter Property="HorizontalAlignment" Value="Left"/>
             <Setter Property="Margin" Value="11,1,1,1"/>
         </Style>
+        <Style TargetType="TextBox" x:Key="ValidatingInput" BasedOn="{StaticResource {x:Type TextBox}}">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="True">
+                    <Setter Property="Foreground" Value="Red"/>
+                    <Setter Property="ToolTip" 
+                         Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)/ErrorContent}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
         <local:DataOnGridBuilder x:Key="GridBuilder" />
     </Window.Resources>
     <DockPanel>
@@ -122,14 +131,18 @@
                     <TextBlock Grid.Row="2" Text="min" HorizontalAlignment="Left"/>
                     <TextBlock Grid.Row="3" Text="max" HorizontalAlignment="Left"/>
 
-                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Source={StaticResource GridBuilder}, Path=Name,
-                         ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"/>
-                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Source={StaticResource GridBuilder}, Path=Count,
-                         ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"/>
-                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Source={StaticResource GridBuilder}, Path=MinValue,
-                         ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"/>
-                    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Source={StaticResource GridBuilder}, Path=MaxValue,
-                         ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource ValidatingInput}"
+                         Text="{Binding Source={StaticResource GridBuilder}, Path=Name,
+                         ValidatesOnExceptions=True, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource ValidatingInput}"
+                         Text="{Binding Source={StaticResource GridBuilder}, Path=Count,
+                         ValidatesOnExceptions=True, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource ValidatingInput}"
+                         Text="{Binding Source={StaticResource GridBuilder}, Path=MinValue,
+                         ValidatesOnExceptions=True, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBox Grid.Row="3" Grid.Column="1" Style="{StaticResource ValidatingInput}"
+                         Text="{Binding Source={StaticResource GridBuilder}, Path=MaxValue,
+                         ValidatesOnExceptions=True, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"/>
                 </Grid>
             </Grid>
         </Grid>

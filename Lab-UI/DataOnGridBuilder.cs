@@ -30,9 +30,10 @@ namespace Lab_UI
                 switch (property)
                 {
                     case "Name":
+                        if (MainColl == null)
+                            break; // no error - init testing
                         if (Name == null) msg = $"Name cannot be null";
                         else if (Name.Length < 1) msg = $"Name length must be at least 1";
-                        else if (MainColl == null) msg = $"No MainCollection";
                         else if (MainColl.Contains(Name)) msg = $"MainCollection is already contains \"{Name}\"";
                         break;
                     case "Count":
@@ -74,6 +75,7 @@ namespace Lab_UI
             {
                 minValue = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("MinValue"));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("MaxValue"));
             }
         }
         public float MaxValue
@@ -83,6 +85,7 @@ namespace Lab_UI
             {
                 maxValue = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("MaxValue"));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("MinValue"));
             }
         }
 
@@ -103,7 +106,9 @@ namespace Lab_UI
         public void SetMainCollection(V1MainCollection mainColl)
         {
             MainColl = mainColl;
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Name"));
+            string temp = name;
+            Name = "";
+            Name = temp;
         }
 
         public void BuildAndAdd()
